@@ -127,7 +127,7 @@ async function writeInventory(inventory, input, basePath) {
         const path = input.replace(`{{ lookup('file', '`, '').replace(`') }}`, '').replace('/volume/', '/');
         return (await fs.readFile(basePath + '/../' + path)).toString();
       } else {
-        input = input.replace(new RegExp(`\{\{ ${confKey} \}\}`, 'g'), host[confKey]);
+        input = input.replace(' | int', '').replace(new RegExp(`\{\{ ${confKey} \}\}`, 'g'), host[confKey]);
       }
     }
   }
