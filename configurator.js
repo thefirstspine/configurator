@@ -8,7 +8,6 @@ const argv = yargs(hideBin(process.argv))
     return yargs
       .positional('app', {
         describe: 'app name',
-        default: 'matches'
       })
   }, (argv) => {
     create(
@@ -16,6 +15,7 @@ const argv = yargs(hideBin(process.argv))
       argv.appPath ? argv.appPath : `./../${argv.app}`,
       argv.playbooksPath ? argv.playbooksPath : `./../ansible/volume/playbooks`,
       argv.confPath ? argv.confPath : `./../ansible/volume/conf`,
+      argv.forceHttp ? argv.forceHttp : false,
     );
   })
   .option('app-path', {
@@ -33,12 +33,18 @@ const argv = yargs(hideBin(process.argv))
     type: 'string',
     description: 'The conf path - defaults to ./../ansible/volume/conf'
   })
+  .option('force-http', {
+    alias: 't',
+    type: 'boolean',
+    description: 'Force all the URLs to be with an http:// scheme'
+  })
   .parse();
 
-async function create(app, appPath, playbooksPath, confPath) {
+async function create(app, appPath, playbooksPath, confPath, forceHttp) {
   const chalk = new (await import("chalk")).Chalk();
 
-  console.log(chalk.bgBlueBright(`Writing configuration of ${app} to ${appPath} from ${playbooksPath} with conf ${confPath}`));
+  console.log(chalk.bgBlueBright(`Writing configuration of ${app}`));
+  console.log({ app, appPath, playbooksPath, confPath, forceHttp });
   console.log(` `);
 
   let playbook,
@@ -82,7 +88,11 @@ async function create(app, appPath, playbooksPath, confPath) {
   try {
     conf = {};
     for (let key in playbook[0].roles[0].docker_env) {
-      conf[key] = await writeInventory(inventory, playbook[0].roles[0].docker_env[key], confPath);
+      let value = await writeInventory(inventory, playbook[0].roles[0].docker_env[key], confPath);
+      if (forceHttp) {
+        value = value.replace(/^https:\/\//g, 'http://');
+      }
+      conf[key] = value;
     }
     console.log(chalk.green(`✔️   Conf generated`));
   } catch(e) {
@@ -105,6 +115,8 @@ async function create(app, appPath, playbooksPath, confPath) {
     process.exit(1);
   }
   console.log(` `);
+
+  console.log(chalk.bgGreenBright(`Configuration of ${app} written under ${appPath}/.env`));
 }
 
 async function writeInventory(inventory, input, basePath) {
