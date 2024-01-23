@@ -24,5 +24,31 @@ Options:
 ### Example for local environments
 
 ```
-node configurator.js create matches --conf-path ./../ansible-secrets-local/conf --force-http true
+> node configurator.js create matches --conf-path ./../ansible-secrets-local/conf --force-http true
+
+Writing configuration of calendar
+{
+  app: 'calendar',
+  appPath: './../calendar',
+  playbooksPath: './../ansible/volume/playbooks',
+  confPath: './../ansible-secrets-local/conf',
+  forceHttp: true
+}
+
+Delete ./../calendar/.env
+⚠️   Cannot delete base env file - does the file exist?
+
+Fetching playbook in ./../ansible/volume/playbooks/deploy-calendar.yaml
+✔️   Playbook fetched
+
+Fetching inventory in ./../ansible-secrets-local/conf/inventory.yaml
+✔️   Config fetched
+ 
+Generating conf
+✔️   Conf generated
+
+Writing conf
+✔️   Conf wrote
+
+Configuration of calendar written under ./../calendar/.env
 ```
