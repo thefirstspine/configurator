@@ -88,11 +88,12 @@ async function create(app, appPath, playbooksPath, confPath, forceHttp) {
   try {
     conf = {};
     for (let key in playbook[0].roles[0].docker_env) {
-      let value = await writeInventory(inventory, playbook[0].roles[0].docker_env[key], confPath);
+      let value = await getValueFromInventory(inventory, playbook[0].roles[0].docker_env[key], confPath);
       if (forceHttp) {
         value = value.replace(/^https:\/\//g, 'http://');
       }
       conf[key] = value;
+      console.log(chalk.white(`✨   Value for ${key} is ${value}`));
     }
     console.log(chalk.green(`✔️   Conf generated`));
   } catch(e) {
@@ -119,7 +120,7 @@ async function create(app, appPath, playbooksPath, confPath, forceHttp) {
   console.log(chalk.bgGreenBright(`Configuration of ${app} written under ${appPath}/.env`));
 }
 
-async function writeInventory(inventory, input, basePath) {
+async function getValueFromInventory(inventory, input, basePath) {
   for (let hostName in inventory.apps.hosts) {
     const host = inventory.apps.hosts[hostName];
     for (let confKey in host) {

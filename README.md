@@ -5,7 +5,7 @@ Works along the Ansible playbooks to create clean & reliable dotenv configs to u
 ## Usage
 
 ```
-configurator.js [command]
+npm run configurator -- [command]
 
 Commands:
   configurator.js create [app]  start the server
@@ -24,7 +24,7 @@ Options:
 ### Example for local environments
 
 ```
-> node configurator.js create matches --conf-path ./../ansible-secrets-local/conf --force-http true
+> npm run configurator -- create matches --conf-path ./../ansible-secrets-local/conf --force-http true
 
 Writing configuration of calendar
 {
